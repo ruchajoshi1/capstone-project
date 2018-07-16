@@ -1,0 +1,41 @@
+---
+title: "MDIS"
+author: "Rucha"
+date: "July 5, 2018"
+output: html_document
+---
+
+#Maritime Data Intelligence System
+
+**Problem** - Predict the revenue on the charter routes based on previous years data so that client can choose the route to get the maximum profit and improve visualization for existing dashboard data.  
+
+**Client** - Ship chartering/contracting business company  
+
+**Data** - Provided by clients  
+
+**Description** - The objective of this project is to maximize the revenues in ship chartering/ contracting business through efficient operational planning and optimization of resources.  
+
+**Requirements** -   
+1. The user should be able to select a time window over which to view the trade.  
+2. The user should be able to select the opening area/loading area/discharge area for trade for the chosen time window.  
+3. Basis Ser 1 and 2, trade flows are to be depicted on a map with suitable visualization in the form of color/thickness of flow lines/ports linked to the following: -  
+  (a) Time Charter Equivalent (TCE).   
+  (b) Total number of voyage days.  
+  (c) Total number of voyages undertaken.  
+  (d) weight & type of cargo traded.  
+  (e) Utilization for each voyage.  
+4. The user should be able to visualize laden and ballast routes.  
+5. The user should be able to visualize waiting days and long port stay days (variable field) for different ports and vessels.  
+6. The user should be able to compare two different time periods at the same time.  
+7. The user should be able to compare Eco vs Non-Eco, different vessel classes as well as different ships for the above-mentioned analysis.  
+8. The user should be able to compare different charterers for the above-mentioned analysis.  
+9. The user should be able to generate a vessel specific report describing the voyages and financials statements of the vessel.  
+
+**Assumptions** -   
+1.Routes/Waypoints between different ports will be provided by client either manually or through API access.  
+2.Classification of long port stay will be provided by client.  
+3.Boundary Boxes for different regions/areas will be provided by client.  
+
+**Approach** - The application will be developed in the R statistical programming language using the Shiny framework. Custom JavaScript libraries might be used to realize the visualizations desired by the user.  
+
+**Deliverable** - R and Shiny code, presentation on the results.  
