@@ -10,7 +10,7 @@ output: html_document
 For all this analysis I used data-type = "A"  and batch_Id = 96.  
 
 **1.** From the plots of sum of the earnings per year for all vessel types it Looks like every year Handymax Pool, Midrange Pool are doing well. Chemical tanker started in 2017. Cobra was in business just for 3 years from 2014, 2015, 2016.  
-Total earnings of all the vessel types for all the years is about $170.8 million where Midrange Pool, Handymax Pool, Panamax Pool and Aframax  LR2 Pool are contributing $141.8 million.
+Out of the total earnings of all the vessel types for all the years is about 80% earnings are from Midrange Pool, Handymax Pool, Panamax Pool and Aframax  LR2 Pool.
 So majority of business is done by these pool vessel type.   
 
 In 2017 out of $28 million business $23 million business is done by Midrange Pool, Handymax Pool, Aframax LR2 pool.  
