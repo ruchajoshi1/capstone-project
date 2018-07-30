@@ -1,0 +1,31 @@
+---
+title: "Statistical analysis - project"
+author: "RJ"
+date: "July 30, 2018"
+output: html_document
+---
+
+### Statistical analysis for project
+
+For all this analysis I used data-type = "A"  and batch_Id = 96.  
+
+**1.** From the plots of sum of the earnings per year for all vessel types it Looks like every year Handymax Pool, Midrange Pool are doing well. Chemical tanker started in 2017. Cobra was in business just for 3 years from 2014, 2015, 2016.  
+Total earnings of all the vessel types for all the years is about $170.8 million where Midrange Pool, Handymax Pool, Panamax Pool and Aframax  LR2 Pool are contributing $141.8 million.
+So majority of business is done by these pool vessel type.   
+
+In 2017 out of $28 million business $23 million business is done by Midrange Pool, Handymax Pool, Aframax LR2 pool.  
+
+**2.** Another plot is average of the earning per year for all vessel types.  
+
+**3.** 3rd PDF is showing average plot for each vessel type for all the years, here it is showing Cobra is highest but  Cobra was used just for 3 years (2014,2015,2016). This plot is not so useful as some vessel types has data for 10 years and some are used in between and some are recent in the business. So we can not compare them all and find the best one.  
+
+**4.** I used box plot to plot monthly earning distribution to find out seasonality. Plot does not show much of seasonality.   
+
+**5.** Used excel to do some more analysis. I tried to plot using pivot table for different batch_Id and those plots are looks same.  
+
+**6.** Another plot is about top 50 trade areas with sum of earnings. It shows that Transatlantic is the largest business area.    
+
+**7.** Next plot is about top 50 cargo type with sum of earnings (cargoShort field). First 10 cargo types are generating 75% of the business.  
+
+From all this analysis it is clear that Pool type of vessel's are beneficial for the business
+and voyages in the transatlantic area carrying FO, CPP, ULSD, Gasoline, Naphtha and Gas Oil etc have more earnings.  
