@@ -1,0 +1,36 @@
+---
+title: "Data Wrangling Report"
+author: "RJ"
+date: "July 30, 2018"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+###Data Wrangling report for capstone project
+
+There are four different data files provided.
+
+**File 1** - There are 21 records with 0 longitude and 0 latitude. -  We decided to ignore these values for now.  
+
+There is one record with -1 value in Id. - we decided to ignore this record.  
+
+**File 2** - There is one record with -1 value in Id. - we decided to ignore this record.   
+Most records has same laden and ballast speed - at the time of contract they decide one speed irrespective of laden or ballast.  
+There are 8 vessels with built-in year as 0 - we will receive updated dates.  
+There are many records where dates are not updated - we will receive updated dates.  
+
+**File 3** - For single Voyage there are multiple records in this file.  
+For eg. for Voyage = 14, there are 15 rows in this file where there are different data_type A,
+E and P (Actual, Estimate and Position) where P as has mostly NA values. Other difference is different batch_Id. Another difference is Fkey_id - which is related to type.  
+
+There are 269 records where port of first load and last discharge are -1. - possibility is that they are cancelled voyages.  
+
+There are 13 CompleteGMT records where date is 2051. - these records look like outliers. They are long term contracts.  
+
+**File 4** - Actual earnings could be negative, zero or positive. Zero earnings could indicate that voyage got cancelled.  
+Id has a value of -1 for few records -  we decided to ignore these records.  
+First load port and last discharge port has blank values - It could mean that voyages got cancelled.  
+
+After considering all these factors from the data and cleaning up the data, now data is ready for further analysis.
+
