@@ -7,7 +7,7 @@ output:
   pdf_document: default
 ---
 
-###Data Wrangling report for capstone project
+### Data Wrangling report for capstone project
 
 There are four different data files provided.
 
