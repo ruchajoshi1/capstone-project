@@ -95,9 +95,17 @@ ggplot(avgv2, aes(x=vsl_type,y=x)) +
   facet_grid(.~year) +
   theme(axis.text.x = element_text(angle=45,hjust = 1))  
 
+avgv2yr <- avgv2[avgv2$year <= 2019 & avgv2$year >= 2010,]
+
+unique(avgv2yr$year)
+ggplot(avgv2yr, aes(x=vsl_type,y=x)) +
+  geom_bar(aes(fill = factor(vsl_type)),stat="identity")+
+  facet_wrap(~year, ncol = 2, nrow = 5) +
+  theme(axis.text.x = element_text(angle=45,hjust = 1))  
+
 ggplot(avgv2, aes(x=vsl_type,y=x)) +
   geom_bar(aes(fill = factor(year)), stat="identity",position = "dodge")+
-  facet_grid(.~year) +
+  facet_grid(~year) +
   theme(axis.text.x = element_text(angle=45,hjust = 1))  
 
 ggplot(avgv2, aes(x=vsl_type,y=x)) +
@@ -242,4 +250,79 @@ unique(v2$vsl_type)
 v22 <- v2[v2$vsl_type=="MID RANGE",]
  v23<-filter(v22,v22$ttlVoyDays_Act<=150)
  summary(lm(v23$tcEquv_Act~v23$ttlVoyDays_Act))
+#--------------------------------------------------------- 
+# replace blank from last discharge port with navalue
+ sum(is.na(v_mod$lastDiscPort)) #285 values
+ v_mod$lastDiscPort[(is.na(v_mod$lastDiscPort))] <- "navalue"
+ avg_ldp <- aggregate(v_mod[,c("tcEquv_Act")],list(lastDiscPort=v_mod$lastDiscPort), sum)
+ avg_ldp <- avg_ldp[order(-avg_ldp$x),]
+ 
+ #plot top 50 last discharge port 
+ ggplot(head(avg_ldp, n=50), aes(x=reorder(lastDiscPort,-x),y=x)) +
+   geom_bar(stat="identity",position = "dodge")+
+   theme(axis.text.x = element_text(angle=45,hjust = 1))
+ 
+ #write_csv(avg_ldp,"lastDiscPort_sum.csv")
+ 
+#---------------------------------------------------------
+ # replace blank from trade area with navalue
+ sum(is.na(v_mod$tradeArea)) #905 values
+ v_mod$tradeArea[(is.na(v_mod$tradeArea))] <- "navalue"
+ avg_ta <- aggregate(v_mod[,c("tcEquv_Act")],list(trade_area=v_mod$tradeArea), sum)
+ avg_ta <- avg_ta[order(-avg_ta$x),]
+ 
+ #plot top 50 trade area 
+ ggplot(head(avg_ta, n=50), aes(x=reorder(trade_area,-x),y=x)) +
+   geom_bar(stat="identity",position = "dodge")+
+   theme(axis.text.x = element_text(angle=45,hjust = 1))
+ 
+ #write_csv(avg_ta,"tradeArea_sum.csv")
+#-------------------------------------------------
+ # replace blank from cargo short with navalue
+ sum(is.na(v_mod$cargoShort)) #1239 values
+ v_mod$cargoShort[(is.na(v_mod$cargoShort))] <- "navalue"
+ avg_cs <- aggregate(v_mod[,c("tcEquv_Act")],list(cargo_short=v_mod$cargoShort), sum)
+ avg_cs <- avg_cs[order(-avg_cs$x),]
+ 
+ #plot top 50 cargo types 
+ ggplot(head(avg_cs, n=50), aes(x=reorder(cargo_short,-x),y=x)) +
+   geom_bar(stat="identity",position = "dodge")+
+   theme(axis.text.x = element_text(angle=45,hjust = 1))
+ 
+#write_csv(avg_cs,"cargoShort_sum.csv")
+# -------------------------------------------------
+   #check for NA values
+   #sum(is.na(v_mod$vsl_type))
+   #sum(is.na(v_mod$tradeArea))
+   #sum(is.na(v_mod$cargoShort))
+   #sum(is.na(v_mod$month))
+   #sum(is.na(v_mod$lastDiscPort))
+   
+   #write modified data into file
+   #write_csv(v_mod, "updated_voypnl.csv")
+   
+   # Write output into PDF
+ 
+ #pdf(file = "regression_results.pdf", paper = "USr")
+ #----------------------------------------------------
+avg_dr <- aggregate(v_mod[,c("dailyrate")],list(vsl_type=v_mod$vsl_type), mean)
+ avg_dr <- avg_dr [order(-avg_dr$x),]
+ 
+ avg_dr
+ 
+ #plot top 50 cargo types 
+ ggplot(avg_dr, aes(x=reorder(vsl_type,-x),y=x)) +
+   geom_bar(stat="identity",position = "dodge")+
+   theme(axis.text.x = element_text(angle=45,hjust = 1))
+ 
+ ----------------------------------------------------------
+   geom_bar(position = position_fill(), colour = "black") +
+   theme(axis.text.x = element_text(angle = 60, hjust=1), plot.title = element_text(hjust = 0.5)) + 
+   labs(title = "Credit Limit Amount vs Default", x = "Limit Amount Bin", y = "Percentage") +
+   guides(fill=guide_legend(title = "October Action")) +
+   scale_y_continuous(labels = scales::percent) +
+   geom_hline(data = hlines, aes(yintercept = baseline, colour = label)) + 
+   scale_colour_manual(NULL, values = "green")
+   
+ 
  

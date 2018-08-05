@@ -1,0 +1,46 @@
+---
+title: "Statistical Analysis"
+author: "RJ"
+date: "August 2, 2018"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+### Statistical analysis for capstone project
+
+For all this analysis data-type = "A"  and batch_Id = 96 are used.  
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(tinytex)
+voypnlfile <- "F:\\Git\\capstone project\\dataSets\\V_Fact_VoyPNL.csv"
+voypnl.data <- read.csv(voypnlfile, na.strings=c("","NA"), stringsAsFactors = FALSE)
+voypnl.data.clear <- filter(voypnl.data, voypnl.data$Fkey_Dim_Voyage_Id != "-1")
+voypnl.data.clear$dateformat <- as.Date(as.character(voypnl.data.clear$Fkey_DimTime_CompletedGMT),format="%Y%m%d")
+
+voypnl.data.clear <- separate(data=voypnl.data.clear, 
+                         col='dateformat', 
+                         into=c('year', 'month','day'), 
+                         sep = "-",
+                         remove=TRUE)
+v2<- voypnl.data.clear[voypnl.data.clear$data_type=='A' & voypnl.data.clear$BatchId=="96",]
+
+avgv2 <- aggregate(v2[,c("tcEquv_Act")],list(year=v2$year,vsl_type=v2$vsl_type), mean)
+avgv2yr <- avgv2[avgv2$year <= 2019 & avgv2$year >= 2010,]
+
+```
+
+
+### Plot average of each year's earning for each type of vessel
+
+```{r pressure, echo=FALSE, fig.width=20, fig.height=15}
+ggplot(avgv2yr, aes(x=vsl_type,y=x)) +
+  geom_bar(aes(fill = factor(vsl_type)),stat="identity")+
+  facet_wrap(~year, ncol = 2, nrow = 5) +
+  theme(axis.text.x = element_text(angle=45,hjust = 1))  
+```
+
+
