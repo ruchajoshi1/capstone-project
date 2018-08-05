@@ -1,11 +1,3 @@
----
-output:
-  html_document: default
-  pdf_document: default
----
-# Springboard Introduction to Data Science Capstone Project 
-### By Rucha Joshi
-
 ## **Maritime Data Intelligence System - Predicting the revenue of Ship Chartering Business**
 
 ### **Introduction:**
@@ -91,7 +83,6 @@ For a single voyage there are multiple records with different data types as A - 
 If first loading port and/or last discharge port has blank value or actual earnings has zero value then those voyages got cancel due to some reason.  
 
 After doing all this cleaning and reformatting the data is ready for preliminary exploration.  
-
 
 
 ### **Preliminary Exploration:**
@@ -291,94 +282,4 @@ Based on this analysis, earnings of these voyages are dependent on mainly below 
 
 We can say from all of the above plots that voyages with vessel types like MIDRANGE, HANDYMAX carrying FO, CPP, ULSD, Gasoline, Naphtha and Gas Oil etc. in the transatlantic area have more earnings making the business profitable.
 
-
-
-### **Machine Learning:**
-
-In this section we built model that predict the earnings of the voyage. We built a linear regression model.  
-
-#### **Linear Regression:**
-
-Linear regression is used to predict the value of an outcome variable Y based on one or more input predictor variables X. The aim is to establish a linear relationship (a mathematical formula) between the predictor variable(s) and the response variable, so that, we can use this formula to estimate the value of the response Y, when only the predictors (Xs) values are known.  
-
-We first split the data into training dataset and testing dataset. The training dataset was used to build the model to find predictive relationship. The testing data set was used to assess the performance of the model.  
-
-The training dataset used 70% of the observations and testing data set used 30% of the observations. The set.seed  function was used to make sure that dependent variable was balanced in both datasets.  
-```{r, warning=FALSE, message=FALSE}
-#Split the data into training dataset and testing dataset with a 70/30 ratio.
-set.seed(40)
-split = sample.split(v_mod, SplitRatio = 0.70)
-v_mod_train = subset(v_mod, split == TRUE) 
-v_mod_test = subset(v_mod, split == FALSE)
-```
-
-Check the rows for training and testing the datasets
-```{r, warning=FALSE, message=FALSE}
-#Check the rows for training and testing the datasets
-nrow(v_mod_train)
-nrow(v_mod_test)
-```
-
-We can see that, there are number of observations in the training dataset and observations in the testing dataset are consistent with 70/30 ratio.  
-
-We used forward selection approach in building the linear regression model, which starts with no predictors in the model, iteratively adds the most contributive predictors, and stops when the improvement is no longer statistically significant.  
-
-
-#### Build a linear model.
-
-**Model 1 - **
-
-### Model1 starts with fewer independent variables.
-```{r, warning=FALSE}
-# Model1 starts with fewer independent variables.
-reg1 <- lm(v_mod_train$tcEquv_Act~v_mod_train$vsl_type + v_mod_train$TotalVoyageDays_Estimate_LatestDaySnapshot)
-
-#Linear Regression Diagnostics
-summary(reg1) 
-
-plot(reg1)
-```
-
-**Model 2 - **
-
-```{r, warning=FALSE}
-# Model 2 adding more independent variables.
-reg2 <- lm(v_mod_train$tcEquv_Act~v_mod_train$vsl_type + v_mod_train$TotalVoyageDays_Estimate_LatestDaySnapshot +  v_mod_train$Cargo + v_mod_train$Cargo_Lift_Act)
-
-#Linear Regression Diagnostics
-summary(reg2) 
-
-plot(reg2)
-```
-
-**Model 3 - **
-
-```{r, warning=FALSE}
-# Model 3 adding more independent variables.
-reg3 <- lm(v_mod_train$tcEquv_Act~v_mod_train$vsl_type + v_mod_train$TotalVoyageDays_Estimate_LatestDaySnapshot +  v_mod_train$Cargo + v_mod_train$Cargo_Lift_Act + v_mod_train$Month + v_mod_train$lastDiscPort + v_mod_train$dwt)
-
-#Linear Regression Diagnostics
-summary(reg3) 
-
-plot(reg3)
-```
-
-## **Prediction:**
-
-```{r, warning=FALSE}
-# Using model 3 to predict the test dataset.
-#result <- predict(reg3)
-
-#summary(result)
-
-#plot(result)
-
-#plot(predict(reg3), v_mod_test$tcEquv_Act)
-```
-
-## **Conclusions:**
-
-## **Recommendations:**
-1.	Including weather data for each voyage for further analysis will be helpful to get more precise predictions as it is directly related to fuel consumptions.  
-2.	To improve the accuracy in the prediction we can try using different algorithms like Random Forest or Extreme gradient boosting.  
-3.	Comparison of competitor's business can provide more ideas to improve the business.  
+Based on these findings we decided to apply linear regression first to fit the model.
