@@ -1,6 +1,6 @@
 # Capstone Project - Maritime Data Intelligence System
 
-This project is a part of my internship project at Pythian Technologies Pvt. Ltd. This material in this repository is created for Capstone project for Springboard Introduction to Data Science course. The project is done using R language.
+This project is a part of my internship project at Pythian Technologies Pvt. Ltd. The material in this repository is created for Capstone project for Springboard Introduction to Data Science course. This course teaches various steps like data wrangling, data exploraion, data visualization, statistical analysis and machine learning. The project is done using R language.
 
 **Project Details**-   
 
