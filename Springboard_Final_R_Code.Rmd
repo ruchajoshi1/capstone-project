@@ -147,7 +147,7 @@ ggplot(sumv2yr, aes(x=vsl_type,y=x)) +
   guides(fill=guide_legend(title = "Vessel Type"))  
 ```
 
-```{r,warning=FALSE,message=FALSE, eval=FALSE}
+```{r,warning=FALSE,message=FALSE, eval=FALSE, fig.height=20, fig.width=20}
 # Calulate average for each trade area
 avgv4 <- aggregate(v_mod[,c("tcEquv_Act")],list(trade_area=v_mod$tradeArea), mean)
 avgv4 <- avgv4[order(-avgv4$x),]
@@ -220,45 +220,34 @@ nrow(v_mod_test)
 ### Model 1
 ```{r,warning=FALSE,message=FALSE, eval=FALSE}
 # Model1 starts with fewer independent variables.
-reg1 <- lm(v_mod_train$tcEquv_Act~v_mod_train$vsl_type + v_mod_train$TotalVoyageDays_Estimate_LatestDaySnapshot)
+model1 <- lm(tcEquv_Act~vsl_type + TotalVoyageDays_Estimate_LatestDaySnapshot, v_mod_train)
 
 #Linear Regression Diagnostics
-summary(reg1) 
-
-plot(reg1)
+summary(model1) 
 ```
 
 ### Model 2
 ```{r,warning=FALSE,message=FALSE, eval=FALSE}
 # Model 2 adding more independent variables.
-reg2 <- lm(v_mod_train$tcEquv_Act~v_mod_train$vsl_type + v_mod_train$TotalVoyageDays_Estimate_LatestDaySnapshot +  v_mod_train$Cargo + v_mod_train$Cargo_Lift_Act)
+model2 <- lm(tcEquv_Act~vsl_type + TotalVoyageDays_Estimate_LatestDaySnapshot + Cargo + Cargo_Lift_Act, v_mod_train)
 
 #Linear Regression Diagnostics
-summary(reg2) 
-
-plot(reg2)
+summary(model2) 
 ```
 
 ### Model 3
 ```{r,warning=FALSE,message=FALSE, eval=FALSE}
 # Model 3 adding more independent variables.
-reg3 <- lm(v_mod_train$tcEquv_Act~v_mod_train$vsl_type + v_mod_train$TotalVoyageDays_Estimate_LatestDaySnapshot +  v_mod_train$Cargo + v_mod_train$Cargo_Lift_Act + v_mod_train$Month + v_mod_train$lastDiscPort + v_mod_train$dwt)
+model3 <- lm(tcEquv_Act~vsl_type + TotalVoyageDays_Estimate_LatestDaySnapshot + Cargo + Cargo_Lift_Act + Month + lastDiscPort + dwt, v_mod_train)
 
 #Linear Regression Diagnostics
-summary(reg3) 
-
-plot(reg3)
+summary(model3) 
 ```
 
 ### Prediction of the earnings
-```{r,warning=FALSE,message=FALSE, eval=FALSE}
+```{r, warning=FALSE}
 # Using model 3 to predict the test dataset.
-#result <- predict(reg3)
+prediction <- predict(model3, v_mod_test)
 
-#summary(result)
-
-#plot(result)
-
-#plot(predict(reg3), v_mod_test$tcEquv_Act)
+plot(prediction, v_mod_test$tcEquv_Act)
 ```
-

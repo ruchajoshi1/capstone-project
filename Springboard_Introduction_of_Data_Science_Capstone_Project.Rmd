@@ -250,14 +250,14 @@ This shows the whole year business is going on.
 
 **V.**	This plot has been plotted to find top trade areas from sum of earnings.  
 
-```{r, echo=FALSE, warning=FALSE, fig.width=20}
+```{r, echo=FALSE, warning=FALSE, fig.width=20, fig.height=20}
 #sum of earnings for top 50 trade area
 sumv4 <- aggregate(v_mod[,c("tcEquv_Act")],list(trade_area=v_mod$tradeArea), sum)
 sumv4 <- sumv4[order(-sumv4$x),]
 
 sumv5 <- head(sumv4, n=50)
 
-#plot sum for top 50 trade area
+#plot sum of earnings for top trade area
 ggplot(sumv5, aes(x=reorder(trade_area,-x),y=x)) +
   geom_bar(stat="identity",position = "dodge") +
   theme(axis.text.x = element_text(angle=45,hjust = 1), plot.title = element_text(hjust = 0.5)) +     labs(title = "Sum of earnings vs Trade Area", x = "Trade Area", y = "Sum of earnings(USD)") 
@@ -331,52 +331,45 @@ We used forward selection approach in building the linear regression model, whic
 ### Model1 starts with fewer independent variables.
 ```{r, warning=FALSE}
 # Model1 starts with fewer independent variables.
-reg1 <- lm(v_mod_train$tcEquv_Act~v_mod_train$vsl_type + v_mod_train$TotalVoyageDays_Estimate_LatestDaySnapshot)
+model1 <- lm(tcEquv_Act~vsl_type + TotalVoyageDays_Estimate_LatestDaySnapshot, v_mod_train)
 
 #Linear Regression Diagnostics
-summary(reg1) 
-
-plot(reg1)
+summary(model1) 
 ```
 
 **Model 2 - **
 
 ```{r, warning=FALSE}
 # Model 2 adding more independent variables.
-reg2 <- lm(v_mod_train$tcEquv_Act~v_mod_train$vsl_type + v_mod_train$TotalVoyageDays_Estimate_LatestDaySnapshot +  v_mod_train$Cargo + v_mod_train$Cargo_Lift_Act)
+model2 <- lm(tcEquv_Act~vsl_type + TotalVoyageDays_Estimate_LatestDaySnapshot + Cargo + Cargo_Lift_Act, v_mod_train)
 
 #Linear Regression Diagnostics
-summary(reg2) 
-
-plot(reg2)
+summary(model2) 
 ```
 
 **Model 3 - **
 
 ```{r, warning=FALSE}
 # Model 3 adding more independent variables.
-reg3 <- lm(v_mod_train$tcEquv_Act~v_mod_train$vsl_type + v_mod_train$TotalVoyageDays_Estimate_LatestDaySnapshot +  v_mod_train$Cargo + v_mod_train$Cargo_Lift_Act + v_mod_train$Month + v_mod_train$lastDiscPort + v_mod_train$dwt)
+model3 <- lm(tcEquv_Act~vsl_type + TotalVoyageDays_Estimate_LatestDaySnapshot + Cargo + Cargo_Lift_Act + Month + lastDiscPort + dwt, v_mod_train)
 
 #Linear Regression Diagnostics
-summary(reg3) 
-
-plot(reg3)
+summary(model3) 
 ```
 
 ## **Prediction:**
 
 ```{r, warning=FALSE}
 # Using model 3 to predict the test dataset.
-#result <- predict(reg3)
+prediction <- predict(model3, v_mod_test)
 
-#summary(result)
-
-#plot(result)
-
-#plot(predict(reg3), v_mod_test$tcEquv_Act)
+plot(prediction, v_mod_test$tcEquv_Act)
 ```
 
 ## **Conclusions:**
+
+Earnings can be predicted using vessel type, loading and discharge ports, cargo type, deadweight tonnage, cargo lift these independent variables. Future analysis, weather related data and a model with different algorithms like Random Forest can help to improve the model.
+
 
 ## **Recommendations:**
 1.	Including weather data for each voyage for further analysis will be helpful to get more precise predictions as it is directly related to fuel consumptions.  
