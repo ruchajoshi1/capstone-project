@@ -30,7 +30,8 @@ V_Dim_Voyage_File <- "F:\\Git\\capstone project\\dataSets\\V_Dim_Voyage.csv"
 # Store the data into dataframe and check for blanks and NA
 V_Fact_VoyPNL <- read.csv(V_Fact_VoyPNL_File, na.strings=c("","NA"), stringsAsFactors = FALSE)
 test <- read.csv(test_File, na.strings=c("","NA"), stringsAsFactors = FALSE)
-V_Dim_CargoAndGrade <- read.csv(V_Dim_CargoAndGrade_File, na.strings=c("","NA"), stringsAsFactors = FALSE)
+V_Dim_CargoAndGrade <- read.csv(V_Dim_CargoAndGrade_File, na.strings=c("","NA"), 
+                                stringsAsFactors = FALSE)
 V_Dim_Vessel <- read.csv(V_Dim_Vessel_File, na.strings=c("","NA"), stringsAsFactors = FALSE)
 V_Dim_Voyage <- read.csv(V_Dim_Voyage_File, na.strings=c("","NA"), stringsAsFactors = FALSE)
 
@@ -60,7 +61,8 @@ V_Fact_VoyPNL$Year <- lubridate::year(ymd(V_Fact_VoyPNL$Fkey_DimTime_CompletedGM
 
 ```{r,warning=FALSE,message=FALSE, eval=FALSE}
 # considering data with only data_type = "A" and BatchId 
-v_mod<- V_Fact_VoyPNL[V_Fact_VoyPNL$data_type=='A' & V_Fact_VoyPNL$BatchId==max(V_Fact_VoyPNL$BatchId),]
+v_mod<- V_Fact_VoyPNL[V_Fact_VoyPNL$data_type=='A' &
+                      V_Fact_VoyPNL$BatchId==max(V_Fact_VoyPNL$BatchId),]
 ```
 
 ```{r,warning=FALSE,message=FALSE, eval=FALSE}
@@ -81,25 +83,29 @@ v_mod$firstLoadPort <- test$Region[match(v_mod$firstLoadPort,test$PortName)]
 
 ```{r,warning=FALSE,message=FALSE, eval=FALSE}
 #Restrict the cargo types by matching them with Cargo text from the cargo table
-v_mod$Cargo <- V_Dim_CargoAndGrade$CargoGrade_txt[match(v_mod$cargoShort,V_Dim_CargoAndGrade$Cargo_ShortName)]
+v_mod$Cargo <- V_Dim_CargoAndGrade$CargoGrade_txt[match(v_mod$cargoShort,
+                                                        V_Dim_CargoAndGrade$Cargo_ShortName)]
 ```
 
 ```{r,warning=FALSE,message=FALSE, eval=FALSE}
 # Join dwt column from V_Dim_Vessel table to the dataset
-v_mod <- v_mod %>% left_join(V_Dim_Vessel[,c("Dim_Vessel_Id","dwt")], by=c("Fkey_Dim_Vessel_Id"="Dim_Vessel_Id"))
+v_mod <- v_mod %>% left_join(V_Dim_Vessel[,c("Dim_Vessel_Id","dwt")],
+                             by=c("Fkey_Dim_Vessel_Id"="Dim_Vessel_Id"))
 ```
 
 ```{r,warning=FALSE,message=FALSE, eval=FALSE}
 # Join estimate earnings and estimate voyage days columns from V_Dim_Voyage to the datset
-v_mod <- left_join(v_mod,V_Dim_Voyage[,c("Dim_Voyage_Id","TCEquiv_Estimate_LatestDaySnapshot","TotalVoyageDays_Estimate_LatestDaySnapshot")],by = c("Fkey_Dim_Voyage_Id" = "Dim_Voyage_Id"))
+v_mod <- left_join(v_mod,V_Dim_Voyage[,c("Dim_Voyage_Id","TCEquiv_Estimate_LatestDaySnapshot",
+                                         "TotalVoyageDays_Estimate_LatestDaySnapshot")],by =
+                  c("Fkey_Dim_Voyage_Id" = "Dim_Voyage_Id"))
 ```
 
 ```{r,warning=FALSE,message=FALSE, eval=FALSE}
 # Calculate daily earnings for each voyage
 v_mod$TotalVoyageDays_Est <- v_mod$TotalVoyageDays_Estimate_LatestDaySnapshot
 v_mod$TCEquiv_Est <- v_mod$TCEquiv_Estimate_LatestDaySnapshot
-v_mod <- filter(v_mod, (v_mod$TCEquiv_Est != 0) || (v_mod$TotalVoyageDays_Est != 0))
-v_mod <- filter(v_mod,  v_mod$TotalVoyageDays_Est >= 1)
+v_mod <- filter(v_mod,(v_mod$TCEquiv_Est != 0) || (v_mod$TotalVoyageDays_Est != 0))
+v_mod <- filter(v_mod,v_mod$TotalVoyageDays_Est >= 1)
 v_mod$dailyrate_Est <- v_mod$TCEquiv_Est / v_mod$TotalVoyageDays_Est
 ```
 
@@ -112,7 +118,8 @@ v_mod$diff_TCEquiv <- v_mod$TCEquiv_Est - v_mod$tcEquv_Act
 
 ```{r,warning=FALSE,message=FALSE, eval=FALSE}
 # Calculate average earnings for each year for each vessel type
-avgv2 <- aggregate(v_mod[,c("tcEquv_Act")],list(Year=v_mod$Year,vsl_type=v_mod$vsl_type), mean)
+avgv2 <- aggregate(v_mod[,c("tcEquv_Act")],list(Year=v_mod$Year,vsl_type=v_mod$vsl_type), 
+                   mean)
 head(avgv2)
 
 # plot average of earnings from 2010 to 2019 for each vessel type
@@ -121,7 +128,8 @@ avgv2yr <- avgv2[avgv2$Year <= 2019 & avgv2$Year >= 2010,]
 ggplot(avgv2yr, aes(x=vsl_type,y=x)) +
   geom_bar(aes(fill = factor(vsl_type)),stat="identity")+
   facet_wrap(~Year, ncol = 2, nrow = 5) +
-  theme(axis.text.x = element_text(angle=45,hjust = 1), plot.title = element_text(hjust = 0.5)) +     labs(title = "Average earnings vs Vessel type", x = "Vessel type", y = "Average earnings(USD)") +
+  theme(axis.text.x = element_text(angle=45,hjust = 1), plot.title = element_text(hjust = 0.5)) +
+  labs(title = "Average earnings vs Vessel type", x = "Vessel type", y = "Average earnings(USD)") +
   guides(fill=guide_legend(title = "Vessel Type"))   
 ```
 
@@ -132,7 +140,8 @@ avgv3 <- aggregate(v_mod[,c("tcEquv_Act")],list(vsl_type=v_mod$vsl_type), mean)
 # plot average for each vessel type for all years
 ggplot(avgv3, aes(x=vsl_type,y=x)) +
   geom_bar(stat="identity")+
-  theme(axis.text.x = element_text(angle=45,hjust = 1), plot.title = element_text(hjust = 0.5)) +     labs(title = "Average earnings vs Vessel type", x = "Vessel type", y = "Average earnings(USD)") 
+  theme(axis.text.x = element_text(angle=45,hjust = 1), plot.title = element_text(hjust = 0.5)) +
+  labs(title = "Average earnings vs Vessel type", x = "Vessel type", y = "Average earnings(USD)") 
 ```
 
 ```{r,warning=FALSE,message=FALSE, eval=FALSE}
@@ -145,7 +154,8 @@ sumv2yr <- sumv2[sumv2$Year <= 2019 & sumv2$Year >= 2010,]
 ggplot(sumv2yr, aes(x=vsl_type,y=x)) +
   geom_bar(aes(fill = factor(vsl_type)),stat="identity")+
   facet_wrap(~Year, ncol = 2, nrow = 5) +
-  theme(axis.text.x = element_text(angle=45,hjust = 1), plot.title = element_text(hjust = 0.5)) +     labs(title = "Sum of earnings vs Vessel type", x = "Vessel type", y = "Sum of earnings(USD)") +
+  theme(axis.text.x = element_text(angle=45,hjust = 1), plot.title = element_text(hjust = 0.5)) +
+  labs(title = "Sum of earnings vs Vessel type", x = "Vessel type", y = "Sum of earnings(USD)") +
   guides(fill=guide_legend(title = "Vessel Type"))  
 ```
 
@@ -159,7 +169,8 @@ avgv5 <- head(avgv4, n=50)
 #plot average for top 50 trade area
 ggplot(avgv5, aes(x=reorder(trade_area,-x),y=x)) +
   geom_bar(stat="identity",position = "dodge")+
-  theme(axis.text.x = element_text(angle=45,hjust = 1), plot.title = element_text(hjust = 0.5)) +     labs(title = "Average earnings vs Trade Area", x = "Trade Area", y = "Average earnings(USD)") 
+  theme(axis.text.x = element_text(angle=45,hjust = 1), plot.title = element_text(hjust = 0.5)) +
+  labs(title = "Average earnings vs Trade Area", x = "Trade Area", y = "Average earnings(USD)") 
 ```
 
 ```{r,warning=FALSE,message=FALSE, eval=FALSE}
@@ -172,7 +183,8 @@ sumv5 <- head(sumv4, n=50)
 #plot sum for top 50 trade area
 ggplot(sumv5, aes(x=reorder(trade_area,-x),y=x)) +
   geom_bar(stat="identity",position = "dodge") +
-  theme(axis.text.x = element_text(angle=45,hjust = 1), plot.title = element_text(hjust = 0.5)) +     labs(title = "Sum of earnings vs Trade Area", x = "Trade Area", y = "Sum of earnings(USD)") 
+  theme(axis.text.x = element_text(angle=45,hjust = 1), plot.title = element_text(hjust = 0.5)) +
+  labs(title = "Sum of earnings vs Trade Area", x = "Trade Area", y = "Sum of earnings(USD)") 
 ```
 
 ```{r,warning=FALSE,message=FALSE, eval=FALSE}
@@ -183,7 +195,8 @@ sumv6 <- sumv6[order(-sumv6$x),]
 #plot sum of earnings for each cargo type
 ggplot(sumv6, aes(x=reorder(cargo_type,-x),y=x)) +
   geom_bar(stat="identity",position = "dodge")+
-  theme(axis.text.x = element_text(angle=45,hjust = 1), plot.title = element_text(hjust = 0.5)) +     labs(title = "Sum of earnings vs Cargo type", x = "Cargo type", y = "Sum of earnings(USD)") 
+  theme(axis.text.x = element_text(angle=45,hjust = 1), plot.title = element_text(hjust = 0.5)) +  
+  labs(title = "Sum of earnings vs Cargo type", x = "Cargo type", y = "Sum of earnings(USD)") 
 ```
 
 ```{r,warning=FALSE,message=FALSE, eval=FALSE}
@@ -193,7 +206,8 @@ avgv6 <- aggregate(v_mod[,c("tcEquv_Act")],list(Month=v_mod$Month), mean)
 #plot average monthly earnings for each month
 ggplot(avgv6, aes(x=sort(Month),y=x)) +
   geom_bar(stat="identity",position = "dodge")+
-  theme(axis.text.x = element_text(angle=45,hjust = 1), plot.title = element_text(hjust = 0.5)) +     labs(title = "Average earnings vs Month", x = "Month", y = "Average earnings(USD)") 
+  theme(axis.text.x = element_text(angle=45,hjust = 1), plot.title = element_text(hjust = 0.5)) +  
+  labs(title = "Average earnings vs Month", x = "Month", y = "Average earnings(USD)") 
 
 # Boxplot to find seasonality in the business.
 ggplot(v_mod, aes(x=Month, y=tcEquv_Act)) +
@@ -231,7 +245,7 @@ summary(model1)
 ### Model 2
 ```{r,warning=FALSE,message=FALSE, eval=FALSE}
 # Model 2 adding more independent variables.
-model2 <- lm(tcEquv_Act~vsl_type + TotalVoyageDays_Est + Cargo + Cargo_Lift_Act, v_mod_train)
+model2 <- lm(tcEquv_Act~vsl_type + TotalVoyageDays_Est + Cargo + Cargo_Lift_Act, v_mod_train) 
 
 #Linear Regression Diagnostics
 summary(model2) 
@@ -240,7 +254,8 @@ summary(model2)
 ### Model 3
 ```{r,warning=FALSE,message=FALSE, eval=FALSE}
 # Model 3 adding more independent variables.
-model3 <- lm(tcEquv_Act~vsl_type + TotalVoyageDays_Est + Cargo + Cargo_Lift_Act + Month + lastDiscPort + dwt, v_mod_train)
+model3 <- lm(tcEquv_Act~vsl_type + TotalVoyageDays_Est + Cargo + Cargo_Lift_Act + Month +
+            lastDiscPort + dwt, v_mod_train)
 
 #Linear Regression Diagnostics
 summary(model3) 
