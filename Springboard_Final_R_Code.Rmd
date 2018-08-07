@@ -1,10 +1,10 @@
 ---
-title: "Springboard_Final_R_Code"
+title: "Springboard Final R Code"
 author: "RJ"
 date: "August 5, 2018"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=TRUE, eval=FALSE, warning=FALSE}
@@ -96,14 +96,16 @@ v_mod <- left_join(v_mod,V_Dim_Voyage[,c("Dim_Voyage_Id","TCEquiv_Estimate_Lates
 
 ```{r,warning=FALSE,message=FALSE, eval=FALSE}
 # Calculate daily earnings for each voyage
-v_mod <- filter(v_mod, (v_mod$TCEquiv_Estimate_LatestDaySnapshot != 0) || (v_mod$TotalVoyageDays_Estimate_LatestDaySnapshot != 0))
-v_mod <- filter(v_mod,  v_mod$TotalVoyageDays_Estimate_LatestDaySnapshot >= 1)
-v_mod$dailyrate_Est <- v_mod$TCEquiv_Estimate_LatestDaySnapshot / v_mod$TotalVoyageDays_Estimate_LatestDaySnapshot
+v_mod$TotalVoyageDays_Est <- v_mod$TotalVoyageDays_Estimate_LatestDaySnapshot
+v_mod$TCEquiv_Est <- v_mod$TCEquiv_Estimate_LatestDaySnapshot
+v_mod <- filter(v_mod, (v_mod$TCEquiv_Est != 0) || (v_mod$TotalVoyageDays_Est != 0))
+v_mod <- filter(v_mod,  v_mod$TotalVoyageDays_Est >= 1)
+v_mod$dailyrate_Est <- v_mod$TCEquiv_Est / v_mod$TotalVoyageDays_Est
 ```
 
 ```{r,warning=FALSE,message=FALSE, eval=FALSE}
 # Calculate the difference between estimated earnings and actual earnings
-v_mod$diff_TCEquiv <- v_mod$TotalVoyageDays_Estimate_LatestDaySnapshot - v_mod$tcEquv_Act
+v_mod$diff_TCEquiv <- v_mod$TCEquiv_Est - v_mod$tcEquv_Act
 ```
 
 ### Preliminary Exploration
@@ -220,7 +222,7 @@ nrow(v_mod_test)
 ### Model 1
 ```{r,warning=FALSE,message=FALSE, eval=FALSE}
 # Model1 starts with fewer independent variables.
-model1 <- lm(tcEquv_Act~vsl_type + TotalVoyageDays_Estimate_LatestDaySnapshot, v_mod_train)
+model1 <- lm(tcEquv_Act~vsl_type + TotalVoyageDays_Est, v_mod_train)
 
 #Linear Regression Diagnostics
 summary(model1) 
@@ -229,7 +231,7 @@ summary(model1)
 ### Model 2
 ```{r,warning=FALSE,message=FALSE, eval=FALSE}
 # Model 2 adding more independent variables.
-model2 <- lm(tcEquv_Act~vsl_type + TotalVoyageDays_Estimate_LatestDaySnapshot + Cargo + Cargo_Lift_Act, v_mod_train)
+model2 <- lm(tcEquv_Act~vsl_type + TotalVoyageDays_Est + Cargo + Cargo_Lift_Act, v_mod_train)
 
 #Linear Regression Diagnostics
 summary(model2) 
@@ -238,16 +240,16 @@ summary(model2)
 ### Model 3
 ```{r,warning=FALSE,message=FALSE, eval=FALSE}
 # Model 3 adding more independent variables.
-model3 <- lm(tcEquv_Act~vsl_type + TotalVoyageDays_Estimate_LatestDaySnapshot + Cargo + Cargo_Lift_Act + Month + lastDiscPort + dwt, v_mod_train)
+model3 <- lm(tcEquv_Act~vsl_type + TotalVoyageDays_Est + Cargo + Cargo_Lift_Act + Month + lastDiscPort + dwt, v_mod_train)
 
 #Linear Regression Diagnostics
 summary(model3) 
 ```
 
 ### Prediction of the earnings
-```{r, warning=FALSE}
+```{r, warning=FALSE, eval=FALSE}
 # Using model 3 to predict the test dataset.
 prediction <- predict(model3, v_mod_test)
 
-plot(prediction, v_mod_test$tcEquv_Act)
+plot(prediction, v_mod_test$tcEquv_Act, xlim=c(0,25000))
 ```
