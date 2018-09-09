@@ -90,7 +90,7 @@ dfVoy$Duration <- round(difftime(dfVoy$CompleteGMT,dfVoy$CommenceGMT, units='day
 dfVoy$Month <- month(dfVoy$CommenceGMT, label = TRUE)
 
 #Year in which the voyage starts
-dfVoy$Year <- year(dfVoy$CommenceGMT, label = TRUE)
+dfVoy$Year <- year(dfVoy$CommenceGMT)
 
 #add areas for the first load port and last discharge port.
 dfVoy$LoadArea <- V_Dim_Ports$Area[match(dfVoy$PortOfFirstLoad_PortName,
@@ -173,9 +173,8 @@ Final <- Final[complete.cases(Final),]
 ```{r,warning=FALSE,message=FALSE, eval=FALSE}
 # Calculate average earnings for each year for each vessel type
 avgv2 <- aggregate(Final[,c("Earnings")],list(Year=Final$Year,
-                                              VesselType=Final$VesselType), 
-                   mean)
-head(avgv2)
+                                              VesselType=Final$VesselType), mean)
+#head(avgv2)
 
 # plot average of earnings from 2009 to 2019 for each vessel type
 avgv2yr <- avgv2[avgv2$Year <= 2019 & avgv2$Year >= 2009,]
@@ -260,7 +259,7 @@ ggplot(Final, aes(x=Month, y=Earnings)) +
 ```{r,warning=FALSE,message=FALSE, eval=FALSE}
 #Split the data into training dataset and testing dataset with a 70/30 ratio.
 # set the seed to make the partition reproduciable.
-set.seed(40)
+set.seed(666)
 split <- sample(nrow(Final), floor(0.7*nrow(Final)))
 Final_train <- Final[split,]
 Final_test <- Final[-split,]
