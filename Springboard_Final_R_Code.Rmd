@@ -209,7 +209,7 @@ sumv2 <- aggregate(Final[,c("Earnings")],list(Year=Final$Year,
                                               VesselType=Final$VesselType), sum)
 
 # plot average of each year for each type of vessel
-sumv2yr <- sumv2[sumv2$Year <= 2019 & sumv2$Year >= 2010,]
+sumv2yr <- sumv2[sumv2$Year <= 2019 & sumv2$Year >= 2009,]
 
 ggplot(sumv2yr, aes(x=VesselType,y=x)) +
   geom_bar(aes(fill = factor(VesselType)),stat="identity")+
@@ -309,6 +309,7 @@ plot(prediction, Final_test$Earnings, xlim=c(0,25000))
 ```
 
 ### Model using random forest algorithm
+
 ```{r, warning=FALSE, eval=FALSE}
 ###########################################################################################
 #Divide into training & test datasets
@@ -330,7 +331,7 @@ model <- randomForest(Earnings ~ Distance+Duration+Month+LoadArea+DischargeArea+
 model
 
 (r2 <- rSquared(test$Earnings, test$Earnings - predict(model, test)))
-(mse <- mean((test$Earnings - predict(model, test))^2)) #MSE is really large
+(mse <- mean((test$Earnings - predict(model, test))^2)) 
 
 p <- ggplot(aes(x=actual, y=pred),
             data=data.frame(actual=test$Earnings, pred=predict(model, test)))
@@ -350,23 +351,17 @@ title(main="Variable Importance Random Forest")
 plot(model, main="")
 title(main="Error Rate Random Forest")
 
-
-#Test it on the test dataset
-#outcome <- predict(model, test)
-
-#outcome
 ```
 
-#remove outliers
+### Remove outliers and apply Random Forest
+
+### Model 1
 
 ```{r,warning=FALSE, eval=FALSE}
 #remove outliers - Duration
 
-#x1 <- quantile(Final$Duration,c(0.01,0.99))
+x1 <- quantile(Final$Duration,c(0.01,0.99))
 Final <- Final[Final$Duration >=x1[1] & Final$Duration<=x1[2],]
-
-#Convert all char to factor
-#Final <- Final %>% mutate_if(is.character, as.factor)
 
 ###########################################################################################
 #Divide into training & test datasets
@@ -388,7 +383,7 @@ model1 <- randomForest(Earnings ~ Distance+Duration+Month+LoadArea+DischargeArea
 model1
 
 (r21 <- rSquared(test$Earnings, test$Earnings - predict(model1, test)))
-(mse1 <- mean((test$Earnings - predict(model1, test))^2)) #MSE is really large
+(mse1 <- mean((test$Earnings - predict(model1, test))^2)) 
 
 p <- ggplot(aes(x=actual, y=pred),
             data=data.frame(actual=test$Earnings, pred=predict(model1, test)))
@@ -412,8 +407,9 @@ title(main="Error Rate Random Forest")
 #Test it on the test dataset
 outcome1 <- predict(model1, test)
 
-#outcome
 ```
+
+### Model 2
 
 ```{r,warning=FALSE, eval=FALSE}
 #remove outliers - Duration and Distance
@@ -439,7 +435,7 @@ model2 <- randomForest(Earnings ~ Distance+Duration+Month+LoadArea+DischargeArea
 model2
 
 (r22 <- rSquared(test$Earnings, test$Earnings - predict(model2, test)))
-(mse2 <- mean((test$Earnings - predict(model2, test))^2)) #MSE is really large
+(mse2 <- mean((test$Earnings - predict(model2, test))^2)) 
 
 p <- ggplot(aes(x=actual, y=pred),
             data=data.frame(actual=test$Earnings, pred=predict(model2, test)))
@@ -465,6 +461,8 @@ outcome2 <- predict(model2, test)
 
 ```
 
+### Model 3
+
 ```{r,warning=FALSE, eval=FALSE}
 #remove outliers - Duration, Distance and Quantity
 x3 <- quantile(Final$Qty,c(0.01,0.99))
@@ -489,7 +487,7 @@ model3 <- randomForest(Earnings ~ Distance+Duration+Month+LoadArea+DischargeArea
 model3
 
 (r23 <- rSquared(test$Earnings, test$Earnings - predict(model3, test)))
-(mse3 <- mean((test$Earnings - predict(model3, test))^2)) #MSE is really large
+(mse3 <- mean((test$Earnings - predict(model3, test))^2)) 
 
 p <- ggplot(aes(x=actual, y=pred),
             data=data.frame(actual=test$Earnings, pred=predict(model3, test)))
@@ -514,6 +512,8 @@ title(main="Error Rate Random Forest")
 outcome3 <- predict(model3, test)
 
 ```
+
+### Model 4
 
 ```{r,warning=FALSE, eval=FALSE}
 #remove outliers - Duration, Distance, Quantity and Dwt
@@ -540,7 +540,7 @@ model4 <- randomForest(Earnings ~ Distance+Duration+Month+LoadArea+DischargeArea
 model4
 
 (r24 <- rSquared(test$Earnings, test$Earnings - predict(model4, test)))
-(mse4 <- mean((test$Earnings - predict(model4, test))^2)) #MSE is really large
+(mse4 <- mean((test$Earnings - predict(model4, test))^2)) 
 
 p <- ggplot(aes(x=actual, y=pred),
             data=data.frame(actual=test$Earnings, pred=predict(model4, test)))
@@ -564,6 +564,8 @@ title(main="Error Rate Random Forest")
 #Test it on the test dataset
 outcome4 <- predict(model4, test)
 ```
+
+### Model 5
 
 ```{r,warning=FALSE, eval=FALSE}
 #remove outliers - Duration, Distance, Quantity, Dwt and Earnings
@@ -591,7 +593,7 @@ model5 <- randomForest(Earnings ~ Distance+Duration+Month+LoadArea+DischargeArea
 model5
 
 (r25 <- rSquared(test$Earnings, test$Earnings - predict(model5, test)))
-(mse5 <- mean((test$Earnings - predict(model5, test))^2)) #MSE is really large
+(mse5 <- mean((test$Earnings - predict(model5, test))^2)) 
 
 p <- ggplot(aes(x=actual, y=pred),
             data=data.frame(actual=test$Earnings, pred=predict(model5, test)))
@@ -614,5 +616,4 @@ title(main="Error Rate Random Forest")
 
 #Test it on the test dataset
 outcome5 <- predict(model5, test)
-
 ```
